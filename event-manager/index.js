@@ -65,6 +65,11 @@ const typeDefs = `#graphql
     user: User!
   }
 
+  input CreateParticipantInput {
+    event_id: ID!
+    user_id: ID!
+  }
+
   type Query {
     # User
     users: [User!]!
@@ -92,6 +97,9 @@ const typeDefs = `#graphql
 
     # Location
     addLocation(data: CreateLocationInput!): Location!
+
+    # Participant
+    addParticipant(data: CreateParticipantInput!): Participant!
   }
 `;
 
@@ -116,6 +124,13 @@ const resolvers = {
       const location = { id: nanoid(), ...data };
       locations.push(location);
       return location;
+    },
+
+    // Participant
+    addParticipant: (parent, { data }) => {
+      const participant = { id: nanoid(), ...data };
+      participants.push(participant);
+      return participant;
     },
   },
   Query: {
@@ -142,23 +157,35 @@ const resolvers = {
 
   User: {
     participants: (parent) =>
-      participants.filter((participant) => participant.user_id === parent.id),
-    events: (parent) => events.filter((event) => event.user_id === parent.id),
+      participants.filter(
+        (participant) => participant.user_id.toString() === parent.id.toString()
+      ),
+    events: (parent) =>
+      events.filter(
+        (event) => event.user_id.toString() === parent.id.toString()
+      ),
   },
   Event: {
     user: (parent) =>
-      users.find((user) => user.id.toString() === parent.user_id),
+      users.find((user) => user.id.toString() === parent.user_id.toString()),
     participants: (parent) =>
-      participants.filter((participant) => participant.event_id === parent.id),
+      participants.filter(
+        (participant) =>
+          participant.event_id.toString() === parent.id.toString()
+      ),
     location: (parent) =>
       locations.find(
-        (location) => location.id.toString() === parent.location_id
+        (location) => location.id.toString() === parent.location_id.toString()
       ),
   },
 
   Participant: {
-    user: (parent) => users.find((user) => user.id === parent.user_id),
-    event: (parent) => events.find((event) => event.user_id === parent.user_id),
+    user: (parent) =>
+      users.find((user) => user.id.toString() === parent.user_id.toString()),
+    event: (parent) =>
+      events.find(
+        (event) => event.user_id.toString() === parent.user_id.toString()
+      ),
   },
 };
 
