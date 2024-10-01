@@ -51,6 +51,13 @@ const typeDefs = `#graphql
     lng: Float!
   }
 
+  input CreateLocationInput {
+    name: String!
+    desc: String!
+    lat: Float!
+    lng: Float!
+  }
+
   # Participant
   type Participant {
     id: ID!
@@ -78,27 +85,37 @@ const typeDefs = `#graphql
 
   type Mutation {
     # User
-    createUser(data: CreateUserInput!): User!
+    addUser(data: CreateUserInput!): User!
 
     # Event
-    createEvent(data: CreateEventInput!): Event!
+    addEvent(data: CreateEventInput!): Event!
+
+    # Location
+    addLocation(data: CreateLocationInput!): Location!
   }
 `;
 
 const resolvers = {
   Mutation: {
     // User
-    createUser: (parent, { data }) => {
+    addUser: (parent, { data }) => {
       const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
     },
 
     // User
-    createEvent: (parent, { data }) => {
+    addEvent: (parent, { data }) => {
       const event = { id: nanoid(), ...data };
       events.push(event);
       return event;
+    },
+
+    // Location
+    addLocation: (parent, { data }) => {
+      const location = { id: nanoid(), ...data };
+      locations.push(location);
+      return location;
     },
   },
   Query: {
