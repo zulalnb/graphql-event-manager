@@ -43,7 +43,7 @@ const Mutation = {
   // User
   addEvent: (_, { data }, { db, pubSub }) => {
     const event = { id: nanoid(), ...data };
-    db.events.push(event);
+    db.events.unshift(event);
 
     pubSub.publish("eventCreated", { eventCreated: event });
 
